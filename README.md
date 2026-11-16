@@ -1,5 +1,7 @@
 # Windows Server Troubleshooting Toolkit
 
+[![lint](https://github.com/bisquilha/windows-server-toolkit/actions/workflows/lint.yml/badge.svg)](https://github.com/bisquilha/windows-server-toolkit/actions/workflows/lint.yml)
+
 PowerShell scripts written while running a production Windows Server that hosts an ERP (TOTVS Protheus), SQL Server and Remote Desktop for dozens of users, and that one day stopped accepting logons: *"Please wait for the Local Session Manager"*, zombie RDP sessions, temporary profiles after a forced reset, a Windows Search loop, and so on.
 
 Each script answers one question, prints a readable report and saves a copy in `C:\Temp`. The rule behind all of them: **diagnose read-only first, change only with an explicit switch, keep a backup and a way back.**

@@ -1,0 +1,28 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  powershell:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse every script with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $falhas = 0
+          foreach ($f in Get-ChildItem -Recurse -Filter *.ps1) {
+            $tokens = $null; $errs = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$tokens, [ref]$errs) | Out-Null
+            if ($errs.Count) { $falhas += $errs.Count; $errs | ForEach-Object { Write-Host "$($f.Name): $($_.Message)" } }
+            else { Write-Host "OK  $($f.FullName.Substring($PWD.Path.Length + 1))" }
+          }
+          if ($falhas) { exit 1 }
+      - name: Files are UTF-8 with BOM (Windows PowerShell 5.1 reads accents correctly)
+        shell: powershell
+        run: |
+          $sem = Get-ChildItem -Recurse -Filter *.ps1 | Where-Object { $b = [IO.File]::ReadAllBytes($_.FullName); -not ($b[0] -eq 0xEF -and $b[1] -eq 0xBB -and $b[2] -eq 0xBF) }
+          if ($sem) { $sem | ForEach-Object { Write-Host "sem BOM: $($_.Name)" }; exit 1 }
+          Write-Host 'todos com BOM'
